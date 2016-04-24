@@ -31,8 +31,8 @@ public:
 	//use or worry about this pointer, so just leave this one for me.
 	Node* parent;
 	Node();
-	Node(string, int);
-	bool operator>(&Node);
+	Node(string, int, int);
+	bool operator>(Node&);
 };
 
 //Would probably never use this constructor
@@ -265,7 +265,7 @@ void Graph<T>::shortestPath(T* source, T* destination)
 	while(!minHeap.empty())
 	{
 		Node* temp = &minHeap.pop();
-		for(int i = 0; i < temp.numAdj; i++)
+		for(int i = 0; i < temp->numAdj; i++)
 		{
 			//Don't need to consider previously visited nodes
 			if(temp->arrayOfNodePtrs[i]->visited)
@@ -273,15 +273,15 @@ void Graph<T>::shortestPath(T* source, T* destination)
 				continue;
 			}
 			//If the current distance to observed node is larger than current node distance + # of trans, replace
-			if(temp->arrayOfNodePtrs[i]->distance > (temp.distance + trans(temp.name, temp.arrayOfNodePtrs[i]->name)))
+			if(temp->arrayOfNodePtrs[i]->distance > (temp->distance + trans(temp->name, temp->arrayOfNodePtrs[i]->name)))
 			{
 				//Need to make sure this keeps the integrity of the queue so that the algorithm
 				//doesn't break. Probably need to make my own Queue.
-				temp->arrayOfNodePtrs[i]->distance = temp.distance + trans(temp.name, temp.arrayOfNodePtrs[i]->name);
+				temp->arrayOfNodePtrs[i]->distance = temp->distance + trans(temp->name, temp->arrayOfNodePtrs[i]->name);
 				temp->arrayOfNodePtrs[i]->parent = temp;
 			}
 		}
-		temp.visited = true;
+		temp->visited = true;
 	}
 }
 
