@@ -49,6 +49,8 @@ struct Node {
   string charm; //these two are guarenteed to be here
 
   int[] magi;
+
+  Node* parent;  //This is here for me (Daniel). This should be initialized to NULL for all nodes. I should be the only one to access or change this variable.
   
   Node*[] otherRealms;  //these are subject to change, and I'm not sure of the exact syntax, but this will be a basic setup.
 	
