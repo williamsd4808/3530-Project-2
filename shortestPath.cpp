@@ -6,6 +6,10 @@
 
 using namespace std;
 
+//I pretty much exclusively use camel case, sorry snake case users.
+
+int trans(string, string);
+int cost(int*, int);
 int trans(string, string);
 // Basic structures for me to create a dummy graph to work off of. 
 // The graph will be undirected and weighted. Weights seem like they would have to be calculated
@@ -262,9 +266,16 @@ void Graph<T>::shortestPath(T* source, T* destination)
 		minHeap.push(arrayOfNodes[i]);
 	}
 	//run until all nodes checked
+	Node* target = NULL;
 	while(!minHeap.empty())
 	{
 		Node* temp = &minHeap.pop();
+		if(temp == destination)
+		{
+			temp->visited = true;
+			target = temp;
+			break;
+		}
 		for(int i = 0; i < temp->numAdj; i++)
 		{
 			//Don't need to consider previously visited nodes
@@ -283,6 +294,27 @@ void Graph<T>::shortestPath(T* source, T* destination)
 		}
 		temp->visited = true;
 	}
+	if(target == NULL)
+	{
+		cout << "IMPOSSIBLE" << endl;
+	}
+	else
+	{
+		Node* temp = target;
+		int numChanges = 0;
+		int numGems = 0;
+		while(temp->parent != NULL)
+		{
+			pathStorage.push(temp);
+			temp = temp->parent;
+		}
+		//need to do this since popping decreases size
+		int iterateLimit = pathStorage.size();
+		for (int i = 0; i < iterateLimit; ++i)
+		{
+			
+		}
+	}
 }
 
 template<typename T>
@@ -298,7 +330,8 @@ void Graph<T>::resetGraph()
 
 //End of Graph
 
-int trans(string charm1, string charm2){
+int trans(string charm1, string charm2)
+{
 
 	//Placeholder for functionality
 	int result = 0;
@@ -309,7 +342,34 @@ int trans(string charm1, string charm2){
 	return result; 
 }
 
+int cost(int *magi, int transNum)
+{
+	//Placeholder for functionality
+	int returnCost = 0;
+	//input array of magi power levels and number of transformations required
+
+	//output the sum of the costs of the magi used (total cost of transformation)
+
+	return returnCost;
+  
+}
+
 int main()
 {
+	//Creating dummy nodes to test with
+	cout << "Input # of nodes to create" << endl;
+	int numNode;
+	Node* nodeArray = new Node[numNode];
+	cin >> numNode;
+	cout << "Input a name for each node" << endl;
+	string nodename = "";
+	//Starting with # of magi at 5
+	for (int i = 0; i < numNode; ++i)
+	{
+		cin >> nodename;
+		Node n(nodename, numNode, 5);
+		nodeArray[i] = n;
+	}
+
 	return 0;
 }

@@ -20,6 +20,7 @@ int trans(string charm1, string charm2){
 
 Max incantations availible in a realm:
 
+//I (Daniel) used an int pointer for this array so that we don't have to pass an entire array
 int maxIncant(int[] magi){
 
   //input array of magi power levels
@@ -31,7 +32,7 @@ int maxIncant(int[] magi){
 }
 
 Cost of a number of transforms:
-
+//I (Daniel) used an int pointer for this array so that we don't have to pass an entire array
 int cost(int[] magi, int transNum){
 
   //input array of magi power levels and number of transformations required
@@ -47,11 +48,13 @@ Each realm will be a node:
 struct Node {
 
   string charm; //these two are guarenteed to be here
-
+  //I (Daniel) used an int pointer for this array. It's generally easier for member variables in my opinion, but we can change my code if need be.
   int[] magi;
 
   Node* parent;  //This is here for me (Daniel). This should be initialized to NULL for all nodes. I should be the only one to access or change this variable.
   
+  //For this, I used a Node** i.e. otherRealms = new Node*[(# of realms)];
+
   Node*[] otherRealms;  //these are subject to change, and I'm not sure of the exact syntax, but this will be a basic setup.
 	
 	int[] incantRequired;
