@@ -310,9 +310,15 @@ void Graph<T>::shortestPath(T* source, T* destination)
 		}
 		//need to do this since popping decreases size
 		int iterateLimit = pathStorage.size();
+		Node* temp2;
 		for (int i = 0; i < iterateLimit; ++i)
 		{
-			
+			temp2 = pathStorage.pop();
+			if(!pathStorage.empty())
+			{
+				numChanges += trans(temp2->name, pathStorage.top().name);
+				numGems += cost(temp2->magi, trans(temp2->name, pathStorage.top().name));
+			}
 		}
 	}
 }
