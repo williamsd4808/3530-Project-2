@@ -775,15 +775,13 @@ int main()
 	Node* endNode;
 	for(int i = 0; i < numNode; ++i)
 	{
-		if(nodeArray[i].name==charm1){
+		if(nodeArray[i]->name==charm1){
 			startNode = nodeArray[i];
 		}
-		else if(nodeArray[i].name==charm2){
+		else if(nodeArray[i]->name==charm2){
 			endNode = nodeArray[i];
 		}
 	}
-	
-	
->>>>>>> origin/master
+
 	return 0;
 }
