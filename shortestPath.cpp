@@ -13,7 +13,6 @@ using namespace std;
 
 int trans(string, string);
 int cost(int*, int);
-int trans(string, string);
 // Basic structures for me to create a dummy graph to work off of. 
 // The graph will be undirected and weighted. Weights seem like they would have to be calculated
 // based off of transformations needed from source string to target string.
@@ -39,7 +38,7 @@ public:
 	Node* parent;
 	Node();
 	Node(string, int, int);
-	void setMagi();
+	//void setMagi();
 	bool operator>(Node);
 };
 
@@ -686,7 +685,6 @@ int main()
 	Node* nodeArray = new Node[numNode];
 	string nodename = "";
 	int numMagi = 0;
-	//Starting with # of magi at 5
 	for (int i = 0; i < numNode; ++i)
 	{
 		cout << "Input a name for node <" << i <<">." << endl;
@@ -711,13 +709,16 @@ int main()
 	cin >> charm2;
 	Node* startNode;
 	Node* endNode;
+	int startIndex,endIndex;
 	for(int i = 0; i < numNode; ++i)
 	{
 		if(nodeArray[i].name==charm1){
 			startNode = nodeArray[i];
+			startIndex = i;
 		}
 		else if(nodeArray[i].name==charm2){
 			endNode = nodeArray[i];
+			endIndex = i;
 		}
 	}
 	
