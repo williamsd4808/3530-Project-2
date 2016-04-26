@@ -622,33 +622,6 @@ void MinHeapPQ::testEmptying()
 	return;
 }
 
-int main()
-{
-	cout << "Input # of nodes to create" << endl;
-	int numNode;
-	cin >> numNode;
-	Node* nodeArray = new Node[numNode];
-	MinHeapPQ myPQ(numNode);
-	string nodename = "";
-	int distanceVal = 0;
-	for (int i = 0; i < numNode; ++i)
-	{
-		cout << "Input a name for node <" << i <<">." << endl;
-		cin >> nodename;
-		cout << "Input distance value" << endl;
-		//cout << "Testing distance." << endl;
-		cin >> distanceVal;
-		Node n(nodename, numNode, 5);
-		n.distance = distanceVal;
-		cout << n.distance << endl;
-		nodeArray[i] = n;
-		myPQ.push(n);
-	}
-	myPQ.testPrint();
-	myPQ.testEmptying();
-	return 0;
-}
-
 //End of minHeap
 
 int trans(string charm1, string charm2)
