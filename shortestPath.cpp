@@ -36,7 +36,8 @@ public:
 	Node* parent;
 	Node();
 	Node(string, int, int);
-	bool operator>(Node&);
+	void setMagi();
+	bool operator>(Node);
 };
 
 //Would probably never use this constructor
@@ -69,7 +70,7 @@ Node::Node(string n, int worldSize, int numMagi)
 //This means that we wil have to base path validation off of parent node.
 //Not an issue, just logically strange to have a numeric distance for an
 //inexistant path.
-bool Node::operator>(Node &otherNode)
+bool Node::operator>(Node otherNode)
 {
 	return (this->distance > otherNode.distance) ? true : false;
 }
@@ -249,7 +250,8 @@ Graph<T>::Graph(int sz, T* ourNodes)
 //Actual point of this file
 //May just do the prints from here so I don't have to store this anywhere
 // and return an array or the stack
-// We may just choose to do all of the 
+// We will want to call this function in main, followed by a call to reset, followed by
+// another call to this function with reversed source and destination.
 template<typename T>
 void Graph<T>::shortestPath(T* source, T* destination)
 {
@@ -297,6 +299,7 @@ void Graph<T>::shortestPath(T* source, T* destination)
 	if(target == NULL)
 	{
 		cout << "IMPOSSIBLE" << endl;
+		return;
 	}
 	else
 	{
@@ -320,6 +323,7 @@ void Graph<T>::shortestPath(T* source, T* destination)
 				numGems += cost(temp2->magi, trans(temp2->name, pathStorage.top().name));
 			}
 		}
+		cout << numChanges << " " << numGems << endl;
 	}
 }
 
@@ -336,11 +340,326 @@ void Graph<T>::resetGraph()
 
 //End of Graph
 
+class MinHeapPQ
+{
+private:
+	Node* PQ;
+	int numElements;
+	int PQCapacity;
+
+public:
+	MinHeapPQ();
+	MinHeapPQ(int);
+	//~MinHeapPQ();
+	void heapify(Node*, int);
+	void resizePQ();
+	int size();
+	void testPrint();
+	void push(Node);
+	void pop();
+	void testEmptying();
+	Node top();
+	bool empty();
+
+};
+
+//MinHeapPQ functions/methods
+MinHeapPQ::MinHeapPQ()
+{
+	numElements = 0;
+	PQ = new Node[11];
+	PQCapacity = 10;
+}
+
+MinHeapPQ::MinHeapPQ(int arraySize)
+{
+	numElements = 0;
+	PQCapacity = arraySize;
+	PQ = new Node[arraySize+1];
+	//TEST
+	//cout << "Initialize before heapify finished" << endl;
+
+	//heapify(PQ, numElements);
+
+	//TEST
+	//cout << "Initialize after heapify finished" << endl;
+}
+
+void MinHeapPQ::heapify(Node* PQH, int numElementsH)
+{
+	for(int i = numElementsH/2; i >= 1; i--)
+	{
+		Node rootElement = PQH[i];
+		int child = 2 * i;
+
+		while(child <= numElementsH)
+		{
+			if(child < numElementsH && PQH[child].distance < PQH[child+1].distance)
+			{
+				child++;
+			}
+
+			if(rootElement.distance >= PQH[child].distance)
+			{
+				break;
+			}
+
+			PQH[child/2] = PQH[child];
+			child *= 2;
+		}
+		PQH[child/2] = rootElement;
+	}
+	//TEST
+	cout << "Testing array after heapify: " << endl;
+	for(int j = 1; j <= numElementsH; j++)
+	{
+		cout << PQH[j].distance << " " << endl;
+	}
+
+	return;
+}
+
+void MinHeapPQ::resizePQ()
+{
+	//TEST
+	//cout << "Entering resize function" << endl;
+
+
+	if(numElements == PQCapacity)
+	{
+		//TESTING
+		//cout << "Increasing array capacity" << endl;
+
+
+		Node* temp = PQ;
+		PQ = new Node[PQCapacity * 2];
+		for(int i = 1; i <= numElements; i++)
+		{
+			PQ[i] = temp[i];
+		}
+		PQCapacity = PQCapacity * 2;
+		delete temp;
+
+
+		//TESTING
+		//cout << "Our new array capacity is: " << PQCapacity << endl;
+	}
+	
+	else if(numElements <= PQCapacity/4 && PQCapacity < 10)
+	{
+		//TESTING
+		//cout << "Reducing array capacity from current capacity: " << PQCapacity << endl;
+
+
+		Node* temp = PQ;
+		PQ = new Node[(PQCapacity/2)+1];
+		for(int i = 1; i <= numElements; i++)
+		{
+			PQ[i] = temp[i];
+		}
+		PQCapacity = (PQCapacity / 2) + 1;
+		delete temp;
+
+		//TESTING
+		//cout << "Our new array capacity: " << PQCapacity << endl;
+	}
+	//TEST
+	//cout << "Exiting resize function" << endl;
+
+
+	return;
+}
+
+int MinHeapPQ::size()
+{
+	return numElements;
+}
+
+void MinHeapPQ::push(Node element)
+{
+	//TEST
+	cout << "Entering Push function" << endl;
+
+
+	PQ[numElements+1] = element;
+	numElements++;
+	//resizePQ();
+	int temp = numElements;
+	Node tempEle;
+	//TEST
+	//cout << "numElements is currently: " << numElements << endl;
+
+
+
+	for (int i = 1; (pow(2, i)-1) < numElements; i++)
+	{
+		//TEST
+		//cout << "i is currently: " << i << endl;
+		//TEST
+		cout << "Current iteration value: <" << (pow(2, i)-1) << ">." << endl;
+		cout << "Current numElements: <" << numElements << ">." << endl;
+
+		if(PQ[temp].distance < PQ[temp/2].distance)
+		{
+			PQ[temp] = PQ[temp/2];
+			PQ[temp/2] = element;
+		}
+		temp = temp/2;
+	}
+	//TEST
+	cout << "Exiting Push function" << endl;
+
+	//TEST
+	
+
+	return;
+}
+
+void MinHeapPQ::pop()
+{
+	//TEST
+	//cout << "Entered Pop function" << endl;
+
+
+
+	if(numElements == 0)
+	{
+		cerr << "ERROR: Attempted pop from an empty queue" << endl;
+		return;
+	}
+	//T poppedElement = PQ[1];
+	//TEST
+	//cout << "Deletion of PQ[1] successful. Num elements before decrement: " << numElements << ". Priority of popped element: " << poppedElement.distance << endl;
+
+
+	Node lastElement = PQ[numElements--];
+	//TEST
+	//cout << "Numelements after decrement: " << numElements << endl;
+	int currentNode = 1;
+	int child = 2;
+	while(child <= numElements)
+	{
+		//TEST
+		//cout << "entered while loop" << endl;
+
+
+		if(child < numElements && PQ[child].distance > PQ[child+1].distance)
+		{
+			child++;
+			//TEST
+			//cout << "Incremented child" << endl;
+		}
+		if(lastElement.distance <= PQ[child].distance)
+		{
+			//why break here?
+			break;
+		}
+		//TEST
+		//cout << "Attempting assignment to node in while loop" << endl;
+
+		//Node tempN = PQ[currentNode];
+		PQ[currentNode] = PQ[child];
+		//PQ[child] = tempN;
+		currentNode = child;
+		child *= 2;
+
+		//TEST
+		//cout << "Exiting while loop" << endl;
+	}
+	//TEST
+	//cout << "currentNode is: " << currentNode << " and PQ[2] is " << PQ[2].distance << endl;
+	//cout << "last element priority is: " << lastElement.distance << endl;
+
+
+	PQ[currentNode] = lastElement;
+	//resizePQ();
+
+	//TEST
+	//cout << "Exiting pop function" << endl;
+
+
+	return;
+}
+
+bool MinHeapPQ::empty()
+{
+	if(numElements == 0)
+	{
+		return true;
+	}
+	return false;
+}
+
+Node MinHeapPQ::top()
+{
+	if(empty())
+	{
+		cerr << "Error: Queue empty" << endl;
+		Node element("Error", 1, 1);
+		return element;
+	}
+	//cout << PQ[1].distance << endl;
+	return PQ[1];
+}
+
+void MinHeapPQ::testPrint()
+{
+	for (int i = 1; i <= numElements; ++i)
+	{
+		cout << PQ[i].name << ", " << PQ[i].distance << endl;
+	}
+	cout << endl;
+}
+
+void MinHeapPQ::testEmptying()
+{
+	int size = numElements;
+	for (int i = 0; i < size; ++i)
+	{
+		cout << top().name << ", " << top().distance << endl;
+		pop();
+	}
+	return;
+}
+
+int main()
+{
+	cout << "Input # of nodes to create" << endl;
+	int numNode;
+	cin >> numNode;
+	Node* nodeArray = new Node[numNode];
+	MinHeapPQ myPQ(numNode);
+	string nodename = "";
+	int distanceVal = 0;
+	for (int i = 0; i < numNode; ++i)
+	{
+		cout << "Input a name for node <" << i <<">." << endl;
+		cin >> nodename;
+		cout << "Input distance value" << endl;
+		//cout << "Testing distance." << endl;
+		cin >> distanceVal;
+		Node n(nodename, numNode, 5);
+		n.distance = distanceVal;
+		cout << n.distance << endl;
+		nodeArray[i] = n;
+		myPQ.push(n);
+	}
+	myPQ.testPrint();
+	myPQ.testEmptying();
+	return 0;
+}
+
+//End of minHeap
+
 int trans(string charm1, string charm2)
 {
 
 	//Placeholder for functionality
 	int result = 0;
+	//The following exists for testing purposes alone
+	cout << "The charms being compared are: <" << charm1 << "> and <" << charm2 << ">." << endl;
+	cout << "How many transformations are required?" << endl;
+	cin >> result;
 	//input two charm strings
 
 	//output the int value of the number of transformations required
@@ -352,6 +671,10 @@ int cost(int *magi, int transNum)
 {
 	//Placeholder for functionality
 	int returnCost = 0;
+	//This exists for testing purposes only
+	cout << "The number of transformations is: <" << transNum << ">." << endl;
+	cout << "Assign a cost: " << endl;
+	cin >> returnCost;
 	//input array of magi power levels and number of transformations required
 
 	//output the sum of the costs of the magi used (total cost of transformation)
@@ -362,18 +685,24 @@ int cost(int *magi, int transNum)
 
 int main()
 {
+	//Prints are for testing purposes only, remove before submission
 	//Creating dummy nodes to test with
 	cout << "Input # of nodes to create" << endl;
 	int numNode;
 	Node* nodeArray = new Node[numNode];
 	cin >> numNode;
-	cout << "Input a name for each node" << endl;
 	string nodename = "";
+	int numMagi = 0;
 	//Starting with # of magi at 5
 	for (int i = 0; i < numNode; ++i)
 	{
+		cout << "Input a name for node <" << i <<">." << endl;
 		cin >> nodename;
-		Node n(nodename, numNode, 5);
+		cout << "Input number of magi:" << endl;
+		cin >> numMagi;
+		cout << "Testing distance." << endl;
+		Node n(nodename, numNode, numMagi);
+		cout << n.distance << endl;
 		nodeArray[i] = n;
 	}
 
