@@ -662,8 +662,8 @@ int main()
 	//Creating dummy nodes to test with
 	cout << "Input # of nodes to create" << endl;
 	int numNode;
-	Node* nodeArray = new Node[numNode];
 	cin >> numNode;
+	Node* nodeArray = new Node[numNode];
 	string nodename = "";
 	int numMagi = 0;
 	//Starting with # of magi at 5
@@ -676,8 +676,31 @@ int main()
 		cout << "Testing distance." << endl;
 		Node n(nodename, numNode, numMagi);
 		cout << n.distance << endl;
+		cout << "Input magi power levels" << endl;
+		for(int j = 0; j < numMagi; ++j){
+			cin >> n.magi[j];
+		}
 		nodeArray[i] = n;
 	}
-
+	
+	string charm1;
+	string charm2;
+	cout << "Input name of starting node:" << endl;
+	cin >> charm1;
+	cout << "Input name of ending node:" << endl;
+	cin >> charm2;
+	Node* startNode;
+	Node* endNode;
+	for(int i = 0; i < numNode; ++i)
+	{
+		if(nodeArray[i].name==charm1){
+			startNode = nodeArray[i];
+		}
+		else if(nodeArray[i].name==charm2){
+			endNode = nodeArray[i];
+		}
+	}
+	
+	
 	return 0;
 }
