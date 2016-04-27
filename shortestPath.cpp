@@ -146,6 +146,7 @@ public:
 		magiSize = numMagi;
 		index = 0;
 		distance = (2^31);
+		parent = NULL;
 		// *** distance = static_cast<int>(numeric_limits<char>::max());
 	}
 	// *** bool operator>(Node& otherNode)
@@ -530,6 +531,7 @@ void Stack<T>::push(T element)
 {
 	//TEST
 	cout << "Entered stack push" << endl;
+	cout << "pushing element <" << element->charm << ">" <<endl;
 	array[currentSize] = element;
 	currentSize++;
 	if(currentSize == capacity)
@@ -650,6 +652,9 @@ void Graph<T>::changeIndex(T* nodeCh, MinHeapPQ &myHeap)
 	{
 		if(myHeap.PQ[nodeCh->index/2]->distance > nodeCh->distance)
 		{
+			//TEST
+			cout << "in change index, changing parent of <" << nodeCh->charm << ">." << endl;
+
 			Node* parent = myHeap.PQ[nodeCh->index/2];
 			myHeap.PQ[nodeCh->index/2] = nodeCh;
 			myHeap.PQ[nodeCh->index] = parent;
@@ -714,7 +719,7 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 			temp->visited = true;
 			target = temp;
 			//TEST
-			cout << "Target set to: <" << temp->charm << ">" << endl;
+			cout << "Target set to: <" << target->charm << ">" << endl;
 			break;
 		}
 		//std::cout << "Starts nested for loop\n";
@@ -732,6 +737,8 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 				//doesn't break. Probably need to make my own Queue.
 				temp->arrayOfNodePtrs[i]->distance = temp->distance + trans(temp->charm, temp->arrayOfNodePtrs[i]->charm);
 				changeIndex(temp->arrayOfNodePtrs[i], minHeap);
+				//TEST
+				cout << "About to change parent field of <" << temp->arrayOfNodePtrs[i]->charm << "> to " << temp->charm << endl;
 				temp->arrayOfNodePtrs[i]->parent = temp;
 			}
 		}
@@ -741,8 +748,8 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 	}
 	//TEST
 	std::cout << "Exits main while loop in shortestPath" << endl;
-	cout << "target check. Name is: <" << target->charm << ">" << endl;
-	if(target == NULL)
+	//cout << "target check. Name is: <" << target->charm << ">" << endl;
+	if(target->parent == NULL)
 	{
 		std::cout << "IMPOSSIBLE" << std::endl;
 		return;
@@ -752,10 +759,11 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 		Node* temp = target;
 		int numChanges = 0;
 		int numGems = 0;
+		pathStorage.push(temp);
 		while(temp->parent != NULL)
 		{
-			pathStorage.push(temp);
 			temp = temp->parent;
+			pathStorage.push(temp);
 		}
 		//TEST
 		cout << "Stack should now be filled" << endl;
