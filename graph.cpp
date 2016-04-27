@@ -711,6 +711,7 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 		}
 		//std::cout << "Ends nested for loop\n";
 		temp->visited = true;
+		minHeap.pop();
 	}
 	std::cout << "Exits main while loop in shortestPath\n";
 	if(target == NULL)
@@ -776,7 +777,7 @@ int main()
 			std::cin >> nodePtrArray[i]->magi[j];
 		}
 		std::cout << nodePtrArray[i]->magiSize << std::endl;
-		nodePtrArray[i]->index = i;
+		//nodePtrArray[i]->index = i;
 	}
 
 	// Beginning and ending charm
@@ -784,6 +785,7 @@ int main()
 	std::cin >> begin, end;
 
 	Graph<Node> mainGraph(worldSize, nodePtrArray, begin, end);
+	mainGraph.shortestPath()
 	return 0;
 }
 
