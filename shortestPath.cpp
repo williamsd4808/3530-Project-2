@@ -421,7 +421,7 @@ void MinHeapPQ::pop()
 
 	Node* lastElement = PQ[numElements--];
 	//TEST
-	//cout << "Numelements after decrement: " << numElements << endl;
+	//cout << "NumElements after decrement: " << numElements << endl;
 	int currentNode = 1;
 	int child = 2;
 	while(child <= numElements)
@@ -438,15 +438,13 @@ void MinHeapPQ::pop()
 		}
 		if(lastElement->distance <= PQ[child]->distance)
 		{
-			//why break here?
 			break;
 		}
 		//TEST
 		//cout << "Attempting assignment to node in while loop" << endl;
 
-		//Node tempN = PQ[currentNode];
 		PQ[currentNode] = PQ[child];
-		//PQ[child] = tempN;
+		PQ[child]->index = PQ[child]->index/2;
 		currentNode = child;
 		child *= 2;
 
@@ -459,6 +457,13 @@ void MinHeapPQ::pop()
 
 
 	PQ[currentNode] = lastElement;
+	PQ[currentNode]->index = currentNode;
+	//TEST
+	//cout << "CurrentNodeValue: " << currentNode << endl;
+
+	//TEST
+	//cout << "Testing what's in CurrentNode: " << PQ[currentNode]->distance << endl;
+	//cout << "Testing index of CurrentNode: " << PQ[currentNode]->index << endl;
 	//resizePQ();
 
 	//TEST
@@ -523,8 +528,8 @@ public:
 	Graph();
 	Graph(int, T*);
 	void addNode(T);
-	void shortestPath(T*, T*);
-	void changeDistance(T*, MinHeapPQ &);
+	void shortestPath(T*, T*, int);
+	void changeIndex(T*, MinHeapPQ &);
 	void resetGraph();
 };
 
@@ -546,7 +551,7 @@ Graph<T>::Graph(int sz, T* ourNodes)
 
 //This will be what keeps the integrity of the min heap
 template<typename T>
-void Graph<T>::changePriority(T* nodeCh, MinHeapPQ &myHeap)
+void Graph<T>::changeIndex(T* nodeCh, MinHeapPQ &myHeap)
 {
 	while((nodeCh->index) > 0)
 	{
@@ -579,14 +584,20 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 	//MPQ to manage Dijkstra's. Priority based on distance variable.
 	MinHeapPQ minHeap;
 	Stack<Node> pathStorage(size);
+	arrayOfNodes[startPos].distance = 0;
+	int startFound = 0;
 	//Fill the queue with every node. All except source has priority MAX
 	for (int i = 0; i < size; ++i)
 	{
 		if(source->name == arrayOfNodes[i].name)
 		{
-			arrayOfNodes[i].distance = 0;
+			startFound = 1;
 		}
 		minHeap.push(arrayOfNodes[i]);
+		//This is necessary because source is stored in index 1 initially and i starts
+		//at 0. When we hit the source node, we continue into the array, but we haven't
+		//added a node for that iteration since source is already in the heap
+		arrayOfNodes[i].index = i + 2 - startFound;
 	}
 	//run until all nodes checked
 	Node* target = NULL;
@@ -612,6 +623,7 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 				//Need to make sure this keeps the integrity of the queue so that the algorithm
 				//doesn't break. Probably need to make my own Queue.
 				temp->arrayOfNodePtrs[i]->distance = temp->distance + trans(temp->name, temp->arrayOfNodePtrs[i]->name);
+				changeIndex(temp->arrayOfNodePtrs[i], minHeap);
 				temp->arrayOfNodePtrs[i]->parent = temp;
 			}
 		}
@@ -711,34 +723,6 @@ int cost(int *magi, int transNum)
   
 }
 
-// int main()
-// {
-// 	//Prints are for testing purposes only, remove before submission
-// 	//Creating dummy nodes to test with
-// 	cout << "Input # of nodes to create" << endl;
-// 	int numNode;
-//	cin >> numNode;
-// 	Node* nodeArray = new Node[numNode];
-// 	string nodename = "";
-// 	int numMagi = 0;
-// 	Starting with # of magi at 5
-// 	for (int i = 0; i < numNode; ++i)
-// 	{
-// 		cout << "Input a name for node <" << i <<">." << endl;
-// 		cin >> nodename;
-// 		cout << "Input number of magi:" << endl;
-// 		cin >> numMagi;
-// 		cout << "Testing distance." << endl;
-// 		Node n(nodename, numNode, numMagi);
-// 		cout << n.distance << endl;
-// 		nodeArray[i] = n;
-// 	}
-
-// 	return 0;
-// }
-
-//More Testing on the min heap
-
 int main()
 {
 	cout << "Input # of nodes to create" << endl;
@@ -748,6 +732,7 @@ int main()
 	MinHeapPQ myPQ(numNode);
 	string nodename = "";
 	int distanceVal = 0;
+	int numMagi;
 	for (int i = 0; i < numNode; ++i)
 	{
 		cout << "Input a name for node <" << i <<">." << endl;
@@ -755,11 +740,11 @@ int main()
 		cout << "Input number of magi:" << endl;
 		cin >> numMagi;
 		cout << "Testing distance." << endl;
-		Node n(nodename, numNode, numMagi);
-		cout << n.distance << endl;
+		Node* n = new Node(nodename, numNode, numMagi);
+		cout << n->distance << endl;
 		cout << "Input magi power levels" << endl;
 		for(int j = 0; j < numMagi; ++j){
-			cin >> n.magi[j];
+			cin >> n->magi[j];
 		}
 		nodeArray[i] = n;
 		myPQ.push(n);
@@ -785,3 +770,32 @@ int main()
 
 	return 0;
 }
+
+/*
+int main()
+{
+	cout << "Input # of nodes to create" << endl;
+	int numNode;
+	cin >> numNode;
+	Node** nodeArray = new Node*[numNode];
+	MinHeapPQ myPQ(numNode);
+	string nodename = "";
+	int distanceVal = 0;
+	for (int i = 0; i < numNode; ++i)
+	{
+		cout << "Input a name for node <" << i <<">." << endl;
+		cin >> nodename;
+		cout << "Input distance value" << endl;
+		//cout << "Testing distance." << endl;
+		cin >> distanceVal;
+		Node* n = new Node(nodename, numNode, 5);
+		n->distance = distanceVal;
+		cout << n->distance << endl;
+		nodeArray[i] = n;
+		myPQ.push(n);
+	}
+	//myPQ.testPrint();
+	myPQ.testEmptying();
+	return 0;
+}
+*/

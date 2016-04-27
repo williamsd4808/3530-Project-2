@@ -1,0 +1,8 @@
+I appended a commented out second main that I used to check some functions of the heap. 
+
+function shortestPath(etc) takes a pointer to the source realm, a pointer to the destination realm, and the index of the source realm. The way it works is through the parent pointer. Every node x points exclusively to the node y that gives the shortest path to x. We don't traverse the path of parent pointers until we've found our destination node. When we have, we find the shortest path via the parent pointers. First, we push current node onto the stack. At first, that will be the destination node. Then, we traverse via the parent pointer. We push that node onto the stack and follow it's parent pointer until we are at source node who's parent pointer is null. Then, we pop the stack and calculate costs.
+
+You won't ever have to create a stack or heap. The shortestPath function takes care of that. 
+
+After we've found the shortest path from source to destination, we MUST call resetGraph(), hich takes no arguments. This prepare all nodes for shortestPath(etc) to work going from destination to source.
+After calling resetGraph(), call shortestPath(etc) again to find the path back from destination to source.
