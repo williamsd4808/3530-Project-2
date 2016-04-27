@@ -304,7 +304,7 @@ void MinHeapPQ::push(Node* element)
 	PQ[numElements+1] = element;
 	element->index = numElements + 1;
 	numElements++;
-	resizePQ();
+	//resizePQ();
 	int temp = numElements;
 	Node* tempEle;
 	//TEST
@@ -393,14 +393,14 @@ void MinHeapPQ::pop()
 
 
 	PQ[currentNode] = lastElement;
-	PQ[currentNode]->index = currentNode;
+	//PQ[currentNode]->index = currentNode;
 	//TEST
 	//cout << "CurrentNodeValue: " << currentNode << std::endl;
 
 	//TEST
 	//cout << "Testing what's in CurrentNode: " << PQ[currentNode]->distance << std::endl;
 	//cout << "Testing index of CurrentNode: " << PQ[currentNode]->index << std::endl;
-	resizePQ();
+	//resizePQ();
 
 	//TEST
 	//cout << "Exiting pop function" << std::endl;
@@ -605,12 +605,12 @@ public:
 			if (arrayOfNodes[i]->charm == st)
 			{
 				startingNode = arrayOfNodes[i];
-				startingNode->index = i;
+				startingNode->index = 0;
 			}
 			if (arrayOfNodes[i]->charm == en)
 			{
 				destinationNode = arrayOfNodes[i];
-				destinationNode->index = i;
+				destinationNode->index = 0;
 			}
 			for (int j = 0; j < s; ++j)
 			{
@@ -640,7 +640,7 @@ public:
 		//shortestPath(destinationNode,startingNode, destinationNode->index);
 	}
 
-	void shortestPath(T*, T*, int);
+	void shortestPath(T*, T*, int, int);
 	void changeIndex(T*, MinHeapPQ &);
 	void resetGraph();
 };
@@ -651,7 +651,7 @@ void Graph<T>::changeIndex(T* nodeCh, MinHeapPQ &myHeap)
 	std::cout << "gets to changeIndex" << endl;
 	while((nodeCh->index) > 0)
 	{
-		if(myHeap.PQ[nodeCh->index/2]->distance > nodeCh->distance)
+		if(myHeap.PQ[nodeCh->index/2]->distance > nodeCh->distance && nodeCh->index/2 != 0)
 		{
 			//TEST
 			cout << "in change index, changing parent of <" << nodeCh->charm << ">." << endl;
@@ -660,7 +660,11 @@ void Graph<T>::changeIndex(T* nodeCh, MinHeapPQ &myHeap)
 			myHeap.PQ[nodeCh->index/2] = nodeCh;
 			myHeap.PQ[nodeCh->index] = parent;
 			parent->index = nodeCh->index;
+			//TEST
+			cout << "<" << parent->charm << "> index changed to <" << parent->index << endl;
 			nodeCh->index = nodeCh->index/2;
+			//TEST
+			cout << "<" << nodeCh->charm << "> index changed to <" << nodeCh->index << endl;
 		}
 		else
 		{
@@ -671,7 +675,7 @@ void Graph<T>::changeIndex(T* nodeCh, MinHeapPQ &myHeap)
 }
 
 template<typename T>
-void Graph<T>::shortestPath(T* source, T* destination, int startPos)
+void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSize)
 {
 	//TEST
 	cout << "Entered shortestPath" << endl;
@@ -687,12 +691,16 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 		if(source->charm == arrayOfNodes[i]->charm)
 		{
 			startFound = 1;
+			minHeap.push(arrayOfNodes[i]);
+			continue;
 		}
 		minHeap.push(arrayOfNodes[i]);
 		//This is necessary because source is stored in index 1 initially and i starts
 		//at 0. When we hit the source node, we continue into the array, but we haven't
 		//added a node for that iteration since source is already in the heap
 		arrayOfNodes[i]->index = i + 2 - startFound;
+		//TEST
+		cout << "Pushing to heap: <" << arrayOfNodes[i]->charm << "> with index <" << arrayOfNodes[i]->index << ">\n" << endl;
 	}
 	//run until all nodes checked
 	Node* target = NULL;
@@ -737,6 +745,8 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 				//Need to make sure this keeps the integrity of the queue so that the algorithm
 				//doesn't break. Probably need to make my own Queue.
 				temp->arrayOfNodePtrs[i]->distance = temp->distance + trans(temp->charm, temp->arrayOfNodePtrs[i]->charm);
+				//TEST
+				cout << "changing index of <" << temp->arrayOfNodePtrs[i]->charm << ">" << endl;
 				changeIndex(temp->arrayOfNodePtrs[i], minHeap);
 				//TEST
 				cout << "About to change parent field of <" << temp->arrayOfNodePtrs[i]->charm << "> to " << temp->charm << endl;
@@ -749,7 +759,7 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 	}
 	//TEST
 	std::cout << "Exits main while loop in shortestPath" << endl;
-	//cout << "target check. Name is: <" << target->charm << ">" << endl;
+	cout << "target check. Name is: <" << target->charm << ">" << endl;
 	if(target->parent == NULL)
 	{
 		std::cout << "IMPOSSIBLE" << std::endl;
@@ -757,14 +767,19 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 	}
 	else
 	{
+		//TEST
+		cout << "about to attempt to fill the stack" << endl;
 		Node* temp = target;
 		int numChanges = 0;
 		int numGems = 0;
 		pathStorage.push(temp);
+		cout << "Pushed <" << temp->charm << "> to stack" << endl;
 		while(temp->parent != NULL)
 		{
 			temp = temp->parent;
 			pathStorage.push(temp);
+			//TEST
+			cout << "pushed <" << temp->charm << "> to stack" << endl;
 		}
 		//TEST
 		cout << "Stack should now be filled" << endl;
@@ -851,9 +866,9 @@ int main()
 		}
 	}
 	Graph<Node> mainGraph(worldSize, nodePtrArray, begin, end);
-	mainGraph.shortestPath(source, des, sourceStarter);
+	mainGraph.shortestPath(source, des, sourceStarter, worldSize);
 	mainGraph.resetGraph();
-	mainGraph.shortestPath(des, source, desStarter);
+	mainGraph.shortestPath(des, source, desStarter, worldSize);
 	return 0;
 }
 
