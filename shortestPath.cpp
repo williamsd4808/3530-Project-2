@@ -665,7 +665,7 @@ void Graph<T>::resetGraph()
 {
 	for (int i = 0; i < size; ++i)
 	{
-		arrayOfNodes[i].distance = static_cast< int >(numeric_limits< char >::max());
+		arrayOfNodes[i].distance = (2^31);
 		arrayOfNodes[i].visited = false;
 		arrayOfNodes[i].parent = NULL;
 		arrayOfNodes[i].index = 0;
@@ -729,7 +729,7 @@ int main()
 	int numNode;
 	cin >> numNode;
 	Node** nodeArray = new Node*[numNode];
-	MinHeapPQ myPQ(numNode);
+	//MinHeapPQ myPQ(numNode);
 	string nodename = "";
 	int distanceVal = 0;
 	int numMagi;
@@ -747,7 +747,7 @@ int main()
 			cin >> n->magi[j];
 		}
 		nodeArray[i] = n;
-		myPQ.push(n);
+		//myPQ.push(n);
 	}
 	
 	string charm1;
