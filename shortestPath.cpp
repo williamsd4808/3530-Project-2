@@ -257,7 +257,7 @@ void MinHeapPQ::resizePQ()
 			PQ[i] = temp[i];
 		}
 		PQCapacity = PQCapacity * 2;
-		delete temp;
+		//delete temp;
 
 
 		//TESTING
@@ -303,7 +303,7 @@ void MinHeapPQ::push(Node* element)
 	PQ[numElements+1] = element;
 	element->index = numElements + 1;
 	numElements++;
-	//resizePQ();
+	resizePQ();
 	int temp = numElements;
 	Node* tempEle;
 	//TEST
@@ -399,7 +399,7 @@ void MinHeapPQ::pop()
 	//TEST
 	//cout << "Testing what's in CurrentNode: " << PQ[currentNode]->distance << std::endl;
 	//cout << "Testing index of CurrentNode: " << PQ[currentNode]->index << std::endl;
-	//resizePQ();
+	resizePQ();
 
 	//TEST
 	//cout << "Exiting pop function" << std::endl;
