@@ -827,6 +827,11 @@ int main()
 	std::string begin, end;
 	std::cin >> begin;
 	cin >> end;
+	if(begin == end || worldSize <= 1)
+	{
+		cout << "0 0" << endl;
+		return 0;
+	}
 	Node* source;
 	Node* des;
 	int sourceStarter = -1;
