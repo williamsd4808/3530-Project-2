@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <cmath>
 
+using namespace std;
+
 // I've marked tentative code with a comment followed by three stars (// *** 'code')
 int trans(std::string charm1, std::string charm2){
 	int j = charm1.size();
@@ -512,6 +514,8 @@ T Stack<T>::top()
 template<typename T>
 T Stack<T>::pop()
 {
+	//TEST
+	cout << "Entered stack pop" << endl;
 	T element = array[currentSize - 1];
 	if(currentSize < capacity/2 && capacity > 8)
 	{
@@ -524,6 +528,8 @@ T Stack<T>::pop()
 template<typename T>
 void Stack<T>::push(T element)
 {
+	//TEST
+	cout << "Entered stack push" << endl;
 	array[currentSize] = element;
 	currentSize++;
 	if(currentSize == capacity)
@@ -639,7 +645,7 @@ public:
 template<typename T>
 void Graph<T>::changeIndex(T* nodeCh, MinHeapPQ &myHeap)
 {
-	std::cout << "gets to changeIndex\n";
+	std::cout << "gets to changeIndex" << endl;
 	while((nodeCh->index) > 0)
 	{
 		if(myHeap.PQ[nodeCh->index/2]->distance > nodeCh->distance)
@@ -661,6 +667,8 @@ void Graph<T>::changeIndex(T* nodeCh, MinHeapPQ &myHeap)
 template<typename T>
 void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 {
+	//TEST
+	cout << "Entered shortestPath" << endl;
 	//MPQ to manage Dijkstra's. Priority based on distance variable.
 	MinHeapPQ minHeap;
 	Stack<Node*> pathStorage(size);
@@ -682,15 +690,27 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 	}
 	//run until all nodes checked
 	Node* target = NULL;
-	std::cout << "Starts main while loop in shortestPath\n";
+	//TEST
+	std::cout << "Starts main while loop in shortestPath" << endl;
+
+	bool destinationFound = false;
+	//TESTER INT
+	int r = 0;
 	while(!minHeap.empty())
 	{
+		//TEST
+		r += 1;
+		cout << "Entered iteration <" << r << "> of SP while loop" << endl;
+
 		Node* temp = minHeap.top();
+
+		//TEST
+		cout << "temp name: <" << temp->charm << ">, temp distance: <" << temp->distance << ">" << "Temp index: <" << temp->index << ">." << endl;
 		if(temp == destination)
 		{
-			temp->visited = true;
-			target = temp;
-			break;
+			//TEST
+			cout << "Found destination" << endl;
+			destinationFound = true;
 		}
 		//std::cout << "Starts nested for loop\n";
 		for(int i = 0; i < temp->numAdj; i++)
@@ -708,12 +728,19 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 				temp->arrayOfNodePtrs[i]->distance = temp->distance + trans(temp->charm, temp->arrayOfNodePtrs[i]->charm);
 				changeIndex(temp->arrayOfNodePtrs[i], minHeap);
 				temp->arrayOfNodePtrs[i]->parent = temp;
+				if(destinationFound)
+				{
+					temp->visited = true;
+					target = temp;
+					break;
+				}
 			}
 		}
 		//std::cout << "Ends nested for loop\n";
 		temp->visited = true;
 		minHeap.pop();
 	}
+	//TEST
 	std::cout << "Exits main while loop in shortestPath\n";
 	if(target == NULL)
 	{
@@ -749,6 +776,8 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 template<typename T>
 void Graph<T>::resetGraph()
 {
+	//TEST
+	cout << "Entered resetGraph" << endl;
 	for (int i = 0; i < size; ++i)
 	{
 		arrayOfNodes[i]->distance = (2^31);
@@ -756,6 +785,9 @@ void Graph<T>::resetGraph()
 		arrayOfNodes[i]->parent = NULL;
 		arrayOfNodes[i]->index = 0;
 	}
+
+	//TEST
+	cout << "Exiting resetGraph" << endl;
 }
 
 int main()
@@ -783,7 +815,8 @@ int main()
 
 	// Beginning and ending charm
 	std::string begin, end;
-	std::cin >> begin, end;
+	std::cin >> begin;
+	cin >> end;
 	Node* source;
 	Node* des;
 	int sourceStarter = -1;
