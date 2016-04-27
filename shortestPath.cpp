@@ -84,14 +84,15 @@ int costTrans(int* magi, int size, int num)
 	// Streak is the number of transformations in the current streak
 	// Cost is the total cost of the current streak
 	int streak, cost;
+	// If we're only looking for a streak size of 1 return cost
+	if (num == 1)
+		return magi[0];
 	for (int i = 0; i < size-1; ++i)
 	{
 		// Streak starts at the first element being observed and its cost is that element's cost
 		streak = 1;
 		cost = magi[i];
-		// If we're only looking for a streak size of 1 return cost
-		if (num == 1)
-			return cost;
+
 		// Check the rest of the array if we're starting on the first element or
 		// if the element before is greater than the current element
 		if (i == 0 || magi[i-1] > magi[i])
