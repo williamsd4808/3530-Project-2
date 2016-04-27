@@ -710,7 +710,12 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 		{
 			//TEST
 			cout << "Found destination" << endl;
-			destinationFound = true;
+			cout << "Attempting to set target. " << endl;
+			temp->visited = true;
+			target = temp;
+			//TEST
+			cout << "Target set to: <" << temp->charm << ">" << endl;
+			break;
 		}
 		//std::cout << "Starts nested for loop\n";
 		for(int i = 0; i < temp->numAdj; i++)
@@ -728,12 +733,6 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 				temp->arrayOfNodePtrs[i]->distance = temp->distance + trans(temp->charm, temp->arrayOfNodePtrs[i]->charm);
 				changeIndex(temp->arrayOfNodePtrs[i], minHeap);
 				temp->arrayOfNodePtrs[i]->parent = temp;
-				if(destinationFound)
-				{
-					temp->visited = true;
-					target = temp;
-					break;
-				}
 			}
 		}
 		//std::cout << "Ends nested for loop\n";
@@ -741,7 +740,8 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 		minHeap.pop();
 	}
 	//TEST
-	std::cout << "Exits main while loop in shortestPath\n";
+	std::cout << "Exits main while loop in shortestPath" << endl;
+	cout << "target check. Name is: <" << target->charm << ">" << endl;
 	if(target == NULL)
 	{
 		std::cout << "IMPOSSIBLE" << std::endl;
@@ -757,6 +757,8 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos)
 			pathStorage.push(temp);
 			temp = temp->parent;
 		}
+		//TEST
+		cout << "Stack should now be filled" << endl;
 		//need to do this since popping decreases size
 		int iterateLimit = pathStorage.size();
 		Node* temp2;
