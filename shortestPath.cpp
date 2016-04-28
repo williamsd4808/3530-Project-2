@@ -3,6 +3,7 @@
 #include <cstring>
 #include <stdio.h>
 #include <cmath>
+#include <math.h>
 
 using namespace std;
 
@@ -81,6 +82,14 @@ int maxTrans(int* magi, int size)
 
 int costTrans(int* magi, int size, int num)
 {
+	int lastNumber;
+	// 4 2 3 1, 4, 2
+	// 1 6 2 3 4
+	for (int i = 0; i < size; ++i)
+	{
+		std::cout << magi[i] << " ";
+	}
+	std::cout << "\n";
 	// Streak is the number of transformations in the current streak
 	// Cost is the total cost of the current streak
 	int streak, cost;
@@ -92,6 +101,8 @@ int costTrans(int* magi, int size, int num)
 		// Streak starts at the first element being observed and its cost is that element's cost
 		streak = 1;
 		cost = magi[i];
+		lastNumber = cost;
+		std::cout << "\tCost1: " << cost << std::endl;
 
 		// Check the rest of the array if we're starting on the first element or
 		// if the element before is greater than the current element
@@ -100,18 +111,60 @@ int costTrans(int* magi, int size, int num)
 			for (int j = i; j < size-1; ++j)
 			{
 				// If the next element is greater than the current element, increase the streak count and cost
-				if (magi[j] < magi[j+1])
+				if (lastNumber < magi[j+1])
 				{
 					++streak;
 					cost += magi[j+1];
+					lastNumber = magi[j+1];
+					std::cout << "\tCost2: " << cost << std::endl;
 					// If we found the desired streak length, then return the streak's current cost
 					if (streak == num)
+					{
 						return cost;
+					}
 				}
 			}
 		}
 	}
 	return cost;
+
+	/*int *P = new int[size];
+	int *M = new int[size+1];
+	int L = 0;
+	int lo, hi, mid;
+	for (int i = 0; i < size-1; ++i)
+	{
+		lo = 1;
+		hi = L;
+		while (lo <= hi)
+		{
+			mid = ceil(double((lo+hi)/2));
+			if (X[M[mid]] < X[i])
+		}
+	}*/
+
+	/*int *table = new int[size];
+	int len;
+
+	for (int i = 0; i < size; ++i)
+	{
+		table[i] = 0;
+	}
+
+	table[0] = magi[0];
+	len = 1;
+	for (int i = 1; i < size; i++)
+	{
+		if (magi[i] < table[0])
+			table[0] = A[i];
+		else if (A[i] > table[len-1])
+			table[len++] = A[i];
+		else
+			table[CeilIndex(table, -1, len-1, A[i])] = A[i];
+	}
+
+	delete[] table;
+	return len;*/
 }
 
 class Node
@@ -161,10 +214,10 @@ public:
 class MinHeapPQ
 {
 private:
-	int numElements;
 	int PQCapacity;
 
 public:
+	int numElements;
 	Node** PQ;
 	MinHeapPQ();
 	MinHeapPQ(int);
@@ -648,9 +701,15 @@ public:
 template<typename T>
 void Graph<T>::changeIndex(T* nodeCh, MinHeapPQ &myHeap)
 {
-	std::cout << "gets to changeIndex" << endl;
+	std::cout << "gets to changeIndex, changing: " << nodeCh->charm << endl;
 	while((nodeCh->index) > 0)
 	{
+		std::cout << "\tWithin ChangeIndex: ";
+		for (int j = 0; j < myHeap.numElements; ++j)
+		{
+			std::cout << myHeap.PQ[j+1]->charm << " " << myHeap.PQ[j+1]->index << "  ";
+		}
+		std::cout << "\n";
 		if(myHeap.PQ[nodeCh->index/2]->distance > nodeCh->distance && nodeCh->index/2 != 0)
 		{
 			//TEST
@@ -686,21 +745,23 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 	arrayOfNodes[startPos]->index = 1;
 	int startFound = 0;
 	//Fill the queue with every node. All except source has priority MAX
+	minHeap.push(arrayOfNodes[startPos]);
 	for (int i = 0; i < size; ++i)
 	{
-		if(source->charm == arrayOfNodes[i]->charm)
+		if(source->charm != arrayOfNodes[i]->charm)
+		{
+			minHeap.push(arrayOfNodes[i]);
+			arrayOfNodes[i]->index = i + 2 - startFound;
+			cout << "Pushing to heap: <" << arrayOfNodes[i]->charm << "> with index <" << arrayOfNodes[i]->index << ">\n" << endl;
+		}
+		else 
 		{
 			startFound = 1;
-			minHeap.push(arrayOfNodes[i]);
-			continue;
 		}
-		minHeap.push(arrayOfNodes[i]);
 		//This is necessary because source is stored in index 1 initially and i starts
 		//at 0. When we hit the source node, we continue into the array, but we haven't
 		//added a node for that iteration since source is already in the heap
-		arrayOfNodes[i]->index = i + 2 - startFound;
 		//TEST
-		cout << "Pushing to heap: <" << arrayOfNodes[i]->charm << "> with index <" << arrayOfNodes[i]->index << ">\n" << endl;
 	}
 	//run until all nodes checked
 	Node* target = NULL;
@@ -715,9 +776,17 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 		//TEST
 		r += 1;
 		cout << "Entered iteration <" << r << "> of SP while loop" << endl;
-
+		for (int i = 0; i < minHeap.numElements; ++i)
+		{
+			std::cout << minHeap.PQ[i+1]->charm << " ";
+		}
+		std::cout << "\n";
 		Node* temp = minHeap.top();
-
+		for (int i = 0; i < minHeap.numElements; ++i)
+		{
+			std::cout << minHeap.PQ[i+1]->charm << " ";
+		}
+		std::cout << "\n";
 		//TEST
 		cout << "temp name: <" << temp->charm << ">, temp distance: <" << temp->distance << ">" << "Temp index: <" << temp->index << ">." << endl;
 		if(temp == destination)
@@ -732,6 +801,11 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 			break;
 		}
 		//std::cout << "Starts nested for loop\n";
+		for (int i = 0; i < minHeap.numElements; ++i)
+		{
+			std::cout << minHeap.PQ[i+1]->charm << " ";
+		}
+		std::cout << "\n";
 		for(int i = 0; i < temp->numAdj; i++)
 		{
 			//Don't need to consider previously visited nodes
@@ -739,6 +813,11 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 			{
 				continue;
 			}
+			for (int j = 0; j < minHeap.numElements; ++j)
+			{
+				std::cout << minHeap.PQ[j+1]->charm << " ";
+			}
+			std::cout << "\n";
 			//If the current distance to observed node is larger than current node distance + # of trans, replace
 			if(temp->arrayOfNodePtrs[i]->distance > (temp->distance + trans(temp->charm, temp->arrayOfNodePtrs[i]->charm)))
 			{
@@ -752,10 +831,25 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 				cout << "About to change parent field of <" << temp->arrayOfNodePtrs[i]->charm << "> to " << temp->charm << endl;
 				temp->arrayOfNodePtrs[i]->parent = temp;
 			}
+			for (int j = 0; j < minHeap.numElements; ++j)
+			{
+				std::cout << minHeap.PQ[j+1]->charm << " ";
+			}
+			std::cout << "\n";
 		}
 		//std::cout << "Ends nested for loop\n";
+		for (int i = 0; i < minHeap.numElements; ++i)
+		{
+			std::cout << minHeap.PQ[i+1]->charm << " ";
+		}
+		std::cout << "\n";
 		temp->visited = true;
 		minHeap.pop();
+		for (int i = 0; i < minHeap.numElements; ++i)
+		{
+			std::cout << minHeap.PQ[i+1]->charm << " ";
+		}
+		std::cout << "\n";
 	}
 	//TEST
 	std::cout << "Exits main while loop in shortestPath" << endl;
@@ -789,10 +883,13 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 		for (int i = 0; i < iterateLimit; ++i)
 		{
 			temp2 = pathStorage.pop();
+			std::cout << temp2->charm << " ";
 			if(!pathStorage.empty())
 			{
 				numChanges += trans(temp2->charm, pathStorage.top()->charm);
+				std::cout << temp2->magiSize << " " << trans(temp2->charm, pathStorage.top()->charm) << std::endl;
 				numGems += costTrans(temp2->magi, temp2->magiSize, trans(temp2->charm, pathStorage.top()->charm));
+				std::cout << numGems << std::endl;
 			}
 		}
 		std::cout << numChanges << " " << numGems << std::endl;
