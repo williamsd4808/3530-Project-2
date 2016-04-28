@@ -145,7 +145,7 @@ public:
 		visited = false;
 		magiSize = numMagi;
 		index = 0;
-		distance = pow(2,31);
+		distance = pow(2,29);
 		parent = NULL;
 		// *** distance = static_cast<int>(numeric_limits<char>::max());
 	}
@@ -153,6 +153,13 @@ public:
 	// *** {
 	// *** 	return (this->distance > otherNode.distance) ? true : false;
 	// *** }
+	~Node()
+	{
+		delete[] magi;
+		//delete[] arrayOfNodePtrs;
+		//delete[] incantRequired;
+		//delete[] costRequired;
+	}
 };
 
 //Start of MinHeapPQ
@@ -639,6 +646,14 @@ public:
 		//shortestPath(destinationNode,startingNode, destinationNode->index);
 	}
 
+	~Graph()
+	{
+		for (int i = 0; i < size; ++i)
+		{
+			arrayOfNodes[i]->~Node();
+		}
+	}
+
 	void shortestPath(T*, T*, int, int);
 	void changeIndex(T*, MinHeapPQ &);
 	void resetGraph();
@@ -770,9 +785,6 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 				//Need to make sure this keeps the integrity of the queue so that the algorithm
 				//doesn't break. Probably need to make my own Queue.
 				temp->arrayOfNodePtrs[i]->distance = temp->distance + trans(temp->charm, temp->arrayOfNodePtrs[i]->charm);
-
-				//std::cout << "Distance from " << temp->charm << " to " << temp->arrayOfNodePtrs[i]->charm << " is: " << trans(temp->charm, temp->arrayOfNodePtrs[i]->charm) << std::endl;
-
 				//TEST
 				//cout << "changing index of <" << temp->arrayOfNodePtrs[i]->charm << ">" << endl;
 				changeIndex(temp->arrayOfNodePtrs[i], minHeap);
@@ -852,7 +864,7 @@ void Graph<T>::resetGraph()
 	//cout << "Entered resetGraph" << endl;
 	for (int i = 0; i < size; ++i)
 	{
-		arrayOfNodes[i]->distance = pow(2,31);
+		arrayOfNodes[i]->distance = pow(2,29);
 		arrayOfNodes[i]->visited = false;
 		arrayOfNodes[i]->parent = NULL;
 		arrayOfNodes[i]->index = 0;
