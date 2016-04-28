@@ -713,7 +713,7 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 	//TEST
 	//cout << "Entered shortestPath" << endl;
 	//MPQ to manage Dijkstra's. Priority based on distance variable.
-	MinHeapPQ minHeap;
+	MinHeapPQ minHeap(worldSize);
 	Stack<Node*> pathStorage(size);
 	arrayOfNodes[startPos]->distance = 0;
 	arrayOfNodes[startPos]->index = 1;
