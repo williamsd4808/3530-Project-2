@@ -46,125 +46,83 @@ int trans(std::string charm1, std::string charm2){
 
 int maxTrans(int* magi, int size)
 {
-	// If there are no possible trasnformations for a magi
-	if (size == 0)
+	int *lis, i, j, max = 0;
+	lis = new int[size];
+	for (i = 0; i<size; ++i)
 	{
-		return 0;
+		lis[i] = 1;
 	}
-	// trans is the maximum number of transformations a magi can make
-	// streak is the number of transformations in a streak
-	int trans = 1, streak;
-	for (int i = 0; i < size-1; ++i)
+	for (i = 1; i<size; ++i)
 	{
-		// the minimum number of transformations 
-		streak = 1;
-		// Check the rest of the numbers in the array if it's the first element
-		// or if the element before was greater than the current element
-		if (i == 0 || magi[i-1] > magi[i])
+		for (j = 0; j < i; ++j)
 		{
-			// Iterate through the rest of the elements in the array after the current one
-			for (int j = i; j < size-1; ++j)
+			if (magi[i] > magi[j] && lis[i] < lis[j] + 1)
 			{
-				// If the next element is greater than the current element, add one to the streak
-				if (magi[j] < magi[j+1])
-				{
-					++streak;
-				}
+				lis[i] = lis[j] + 1;
 			}
 		}
-		// If the value of streak is greater than the current greatest number of transformations,
-		// overwrite the maximum transformations variable
-		if (streak > trans)
-			trans = streak;
 	}
-	return trans;
+	for (i = 0; i < size; ++i)
+	{
+		if (max < lis[i])
+		{
+			max = lis[i];
+		}
+	}
+	return max;
 }
 
 int costTrans(int* magi, int size, int num)
 {
-	int lastNumber;
-	// 4 2 3 1, 4, 2
-	// 1 6 2 3 4
+	int *lis, i, j, max = 0;
+	lis = new int[size];
+	for (i = 0; i<size; ++i)
+	{
+		lis[i] = 1;
+	}
+	for (i = 1; i<size; ++i)
+	{
+		for (j = 0; j < i; ++j)
+		{
+			if (magi[i] > magi[j] && lis[i] < lis[j] + 1)
+			{
+				lis[i] = lis[j] + 1;
+			}
+		}
+	}
+	for (i = 0; i < size; ++i)
+	{
+		if (max < lis[i])
+		{
+			max = lis[i];
+		}
+	}
+
 	for (int i = 0; i < size; ++i)
 	{
 		std::cout << magi[i] << " ";
 	}
 	std::cout << "\n";
-	// Streak is the number of transformations in the current streak
-	// Cost is the total cost of the current streak
-	int streak, cost;
-	// If we're only looking for a streak size of 1 return cost
-	if (num == 1)
-		return magi[0];
-	for (int i = 0; i < size-1; ++i)
-	{
-		// Streak starts at the first element being observed and its cost is that element's cost
-		streak = 1;
-		cost = magi[i];
-		lastNumber = cost;
-		std::cout << "\tCost1: " << cost << std::endl;
-
-		// Check the rest of the array if we're starting on the first element or
-		// if the element before is greater than the current element
-		if (i == 0 || magi[i-1] > magi[i])
-		{
-			for (int j = i; j < size-1; ++j)
-			{
-				// If the next element is greater than the current element, increase the streak count and cost
-				if (lastNumber < magi[j+1])
-				{
-					++streak;
-					cost += magi[j+1];
-					lastNumber = magi[j+1];
-					std::cout << "\tCost2: " << cost << std::endl;
-					// If we found the desired streak length, then return the streak's current cost
-					if (streak == num)
-					{
-						return cost;
-					}
-				}
-			}
-		}
-	}
-	return cost;
-
-	/*int *P = new int[size];
-	int *M = new int[size+1];
-	int L = 0;
-	int lo, hi, mid;
-	for (int i = 0; i < size-1; ++i)
-	{
-		lo = 1;
-		hi = L;
-		while (lo <= hi)
-		{
-			mid = ceil(double((lo+hi)/2));
-			if (X[M[mid]] < X[i])
-		}
-	}*/
-
-	/*int *table = new int[size];
-	int len;
-
 	for (int i = 0; i < size; ++i)
 	{
-		table[i] = 0;
+		std::cout << lis[i] << " ";
 	}
+	std::cout << "\n";
 
-	table[0] = magi[0];
-	len = 1;
-	for (int i = 1; i < size; i++)
+	max = num;
+	int cost = 0;
+	for (int i = size-1; i >= 0; --i)
 	{
-		if (magi[i] < table[0])
-			table[0] = A[i];
-		else if (A[i] > table[len-1])
-			table[len++] = A[i];
-		else
-			table[CeilIndex(table, -1, len-1, A[i])] = A[i];
+		if (lis[i] == max)
+		{
+			cost+=magi[i];
+			--max;
+		}
 	}
 
-	delete[] table;
-	return len;*/
+	std::cout << cost << std::endl;
+	delete[] lis;
+	return cost;
 }
 
 class Node
