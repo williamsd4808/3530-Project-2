@@ -98,17 +98,6 @@ int costTrans(int* magi, int size, int num)
 		}
 	}
 
-	for (int i = 0; i < size; ++i)
-	{
-		std::cout << magi[i] << " ";
-	}
-	std::cout << "\n";
-	for (int i = 0; i < size; ++i)
-	{
-		std::cout << lis[i] << " ";
-	}
-	std::cout << "\n";
-
 	max = num;
 	int cost = 0;
 	for (int i = size-1; i >= 0; --i)
@@ -120,7 +109,6 @@ int costTrans(int* magi, int size, int num)
 		}
 	}
 
-	std::cout << cost << std::endl;
 	delete[] lis;
 	return cost;
 }
@@ -157,7 +145,7 @@ public:
 		visited = false;
 		magiSize = numMagi;
 		index = 0;
-		distance = (2^31);
+		distance = pow(2,31);
 		parent = NULL;
 		// *** distance = static_cast<int>(numeric_limits<char>::max());
 	}
@@ -241,7 +229,7 @@ void MinHeapPQ::heapify(Node* PQH, int numElementsH)
 		PQH[child/2] = rootElement;
 	}
 	//TEST
-	std::cout << "Testing array after heapify: " << std::endl;
+	//std::cout << "Testing array after heapify: " << std::endl;
 	for(int j = 1; j <= numElementsH; j++)
 	{
 		std::cout << PQH[j].distance << " " << std::endl;
@@ -309,7 +297,7 @@ int MinHeapPQ::size()
 void MinHeapPQ::push(Node* element)
 {
 	//TEST
-	std::cout << "Entering Push function" << std::endl;
+	//std::cout << "Entering Push function" << std::endl;
 
 
 	PQ[numElements+1] = element;
@@ -328,8 +316,8 @@ void MinHeapPQ::push(Node* element)
 		//TEST
 		//cout << "i is currently: " << i << std::endl;
 		//TEST
-		std::cout << "Current iteration value: <" << (pow(2, i)-1) << ">." << std::endl;
-		std::cout << "Current numElements: <" << numElements << ">." << std::endl;
+		//std::cout << "Current iteration value: <" << (pow(2, i)-1) << ">." << std::endl;
+		//std::cout << "Current numElements: <" << numElements << ">." << std::endl;
 
 		if(PQ[temp]->distance < PQ[temp/2]->distance)
 		{
@@ -341,7 +329,7 @@ void MinHeapPQ::push(Node* element)
 		temp = temp/2;
 	}
 	//TEST
-	std::cout << "Exiting Push function" << std::endl;
+	//std::cout << "Exiting Push function" << std::endl;
 
 	//TEST
 	
@@ -528,7 +516,7 @@ template<typename T>
 T Stack<T>::pop()
 {
 	//TEST
-	cout << "Entered stack pop" << endl;
+	//cout << "Entered stack pop" << endl;
 	T element = array[currentSize - 1];
 	if(currentSize < capacity/2 && capacity > 8)
 	{
@@ -542,8 +530,8 @@ template<typename T>
 void Stack<T>::push(T element)
 {
 	//TEST
-	cout << "Entered stack push" << endl;
-	cout << "pushing element <" << element->charm << ">" <<endl;
+	//cout << "Entered stack push" << endl;
+	//cout << "pushing element <" << element->charm << ">" <<endl;
 	array[currentSize] = element;
 	currentSize++;
 	if(currentSize == capacity)
@@ -627,12 +615,12 @@ public:
 			{
 				if (i != j)
 				{
-					std::cout << "i: " << i << ", j: " << j << std::endl;
+					//std::cout << "i: " << i << ", j: " << j << std::endl;
 					int temp = trans(arrayOfNodes[i]->charm, arrayOfNodes[j]->charm);
-					std::cout << "Transformations required to get from " << arrayOfNodes[i]->charm <<" to " << arrayOfNodes[j]->charm << " is " << temp << std::endl;
+					//std::cout << "Transformations required to get from " << arrayOfNodes[i]->charm <<" to " << arrayOfNodes[j]->charm << " is " << temp << std::endl;
 					if (temp <= arrayOfNodes[i]->magiTrans)
 					{
-						std::cout << temp << " is <= than " << arrayOfNodes[i]->magiTrans << std::endl;
+						//std::cout << temp << " is <= than " << arrayOfNodes[i]->magiTrans << std::endl;
 						arrayOfNodes[i]->arrayOfNodePtrs[arrayOfNodes[i]->numAdj] = arrayOfNodes[j];
 						arrayOfNodes[i]->incantRequired[arrayOfNodes[i]->numAdj] = temp;
 						++arrayOfNodes[i]->numAdj;
@@ -659,43 +647,43 @@ public:
 template<typename T>
 void Graph<T>::changeIndex(T* nodeCh, MinHeapPQ &myHeap)
 {
-	std::cout << "gets to changeIndex, changing: " << nodeCh->charm << endl;
+	//std::cout << "gets to changeIndex, changing: " << nodeCh->charm << endl;
 	while((nodeCh->index) > 0)
 	{
-		std::cout << "\tWithin ChangeIndex: ";
-		for (int j = 0; j < myHeap.numElements; ++j)
+		//std::cout << "\tWithin ChangeIndex: ";
+		/*for (int j = 0; j < myHeap.numElements; ++j)
 		{
 			std::cout << myHeap.PQ[j+1]->charm << " " << myHeap.PQ[j+1]->index << "  ";
 		}
-		std::cout << "\n";
+		std::cout << "\n";*/
 		if(myHeap.PQ[nodeCh->index/2]->distance > nodeCh->distance && nodeCh->index/2 != 0)
 		{
 			//TEST
-			cout << "in change index, changing parent of <" << nodeCh->charm << ">." << endl;
+			//cout << "in change index, changing parent of <" << nodeCh->charm << ">." << endl;
 
 			Node* parent = myHeap.PQ[nodeCh->index/2];
 			myHeap.PQ[nodeCh->index/2] = nodeCh;
 			myHeap.PQ[nodeCh->index] = parent;
 			parent->index = nodeCh->index;
 			//TEST
-			cout << "<" << parent->charm << "> index changed to <" << parent->index << endl;
+			//cout << "<" << parent->charm << "> index changed to <" << parent->index << endl;
 			nodeCh->index = nodeCh->index/2;
 			//TEST
-			cout << "<" << nodeCh->charm << "> index changed to <" << nodeCh->index << endl;
+			//cout << "<" << nodeCh->charm << "> index changed to <" << nodeCh->index << endl;
 		}
 		else
 		{
 			break;
 		}
 	}
-	std::cout << "leaves changeIndex\n";
+	//std::cout << "leaves changeIndex\n";
 }
 
 template<typename T>
 void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSize)
 {
 	//TEST
-	cout << "Entered shortestPath" << endl;
+	//cout << "Entered shortestPath" << endl;
 	//MPQ to manage Dijkstra's. Priority based on distance variable.
 	MinHeapPQ minHeap;
 	Stack<Node*> pathStorage(size);
@@ -710,7 +698,7 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 		{
 			minHeap.push(arrayOfNodes[i]);
 			arrayOfNodes[i]->index = i + 2 - startFound;
-			cout << "Pushing to heap: <" << arrayOfNodes[i]->charm << "> with index <" << arrayOfNodes[i]->index << ">\n" << endl;
+			//cout << "Pushing to heap: <" << arrayOfNodes[i]->charm << "> with index <" << arrayOfNodes[i]->index << ">\n" << endl;
 		}
 		else 
 		{
@@ -724,7 +712,7 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 	//run until all nodes checked
 	Node* target = NULL;
 	//TEST
-	std::cout << "Starts main while loop in shortestPath" << endl;
+	//std::cout << "Starts main while loop in shortestPath" << endl;
 
 	bool destinationFound = false;
 	//TESTER INT
@@ -733,37 +721,37 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 	{
 		//TEST
 		r += 1;
-		cout << "Entered iteration <" << r << "> of SP while loop" << endl;
-		for (int i = 0; i < minHeap.numElements; ++i)
+		//cout << "Entered iteration <" << r << "> of SP while loop" << endl;
+		/*for (int i = 0; i < minHeap.numElements; ++i)
 		{
 			std::cout << minHeap.PQ[i+1]->charm << " ";
 		}
-		std::cout << "\n";
+		std::cout << "\n";*/
 		Node* temp = minHeap.top();
-		for (int i = 0; i < minHeap.numElements; ++i)
+		/*for (int i = 0; i < minHeap.numElements; ++i)
 		{
 			std::cout << minHeap.PQ[i+1]->charm << " ";
 		}
-		std::cout << "\n";
+		std::cout << "\n";*/
 		//TEST
-		cout << "temp name: <" << temp->charm << ">, temp distance: <" << temp->distance << ">" << "Temp index: <" << temp->index << ">." << endl;
+		//cout << "temp name: <" << temp->charm << ">, temp distance: <" << temp->distance << ">" << "Temp index: <" << temp->index << ">." << endl;
 		if(temp == destination)
 		{
 			//TEST
-			cout << "Found destination" << endl;
-			cout << "Attempting to set target. " << endl;
+			//cout << "Found destination" << endl;
+			//cout << "Attempting to set target. " << endl;
 			temp->visited = true;
 			target = temp;
 			//TEST
-			cout << "Target set to: <" << target->charm << ">" << endl;
+			//cout << "Target set to: <" << target->charm << ">" << endl;
 			break;
 		}
 		//std::cout << "Starts nested for loop\n";
-		for (int i = 0; i < minHeap.numElements; ++i)
+		/*for (int i = 0; i < minHeap.numElements; ++i)
 		{
 			std::cout << minHeap.PQ[i+1]->charm << " ";
 		}
-		std::cout << "\n";
+		std::cout << "\n";*/
 		for(int i = 0; i < temp->numAdj; i++)
 		{
 			//Don't need to consider previously visited nodes
@@ -771,47 +759,50 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 			{
 				continue;
 			}
-			for (int j = 0; j < minHeap.numElements; ++j)
+			/*for (int j = 0; j < minHeap.numElements; ++j)
 			{
 				std::cout << minHeap.PQ[j+1]->charm << " ";
 			}
-			std::cout << "\n";
+			std::cout << "\n";*/
 			//If the current distance to observed node is larger than current node distance + # of trans, replace
 			if(temp->arrayOfNodePtrs[i]->distance > (temp->distance + trans(temp->charm, temp->arrayOfNodePtrs[i]->charm)))
 			{
 				//Need to make sure this keeps the integrity of the queue so that the algorithm
 				//doesn't break. Probably need to make my own Queue.
 				temp->arrayOfNodePtrs[i]->distance = temp->distance + trans(temp->charm, temp->arrayOfNodePtrs[i]->charm);
+
+				//std::cout << "Distance from " << temp->charm << " to " << temp->arrayOfNodePtrs[i]->charm << " is: " << trans(temp->charm, temp->arrayOfNodePtrs[i]->charm) << std::endl;
+
 				//TEST
-				cout << "changing index of <" << temp->arrayOfNodePtrs[i]->charm << ">" << endl;
+				//cout << "changing index of <" << temp->arrayOfNodePtrs[i]->charm << ">" << endl;
 				changeIndex(temp->arrayOfNodePtrs[i], minHeap);
 				//TEST
-				cout << "About to change parent field of <" << temp->arrayOfNodePtrs[i]->charm << "> to " << temp->charm << endl;
+				//cout << "About to change parent field of <" << temp->arrayOfNodePtrs[i]->charm << "> to " << temp->charm << endl;
 				temp->arrayOfNodePtrs[i]->parent = temp;
 			}
-			for (int j = 0; j < minHeap.numElements; ++j)
+			/*for (int j = 0; j < minHeap.numElements; ++j)
 			{
 				std::cout << minHeap.PQ[j+1]->charm << " ";
 			}
-			std::cout << "\n";
+			std::cout << "\n";*/
 		}
 		//std::cout << "Ends nested for loop\n";
-		for (int i = 0; i < minHeap.numElements; ++i)
+		/*for (int i = 0; i < minHeap.numElements; ++i)
 		{
 			std::cout << minHeap.PQ[i+1]->charm << " ";
 		}
-		std::cout << "\n";
+		std::cout << "\n";*/
 		temp->visited = true;
 		minHeap.pop();
-		for (int i = 0; i < minHeap.numElements; ++i)
+		/*for (int i = 0; i < minHeap.numElements; ++i)
 		{
 			std::cout << minHeap.PQ[i+1]->charm << " ";
 		}
-		std::cout << "\n";
+		std::cout << "\n";*/
 	}
 	//TEST
-	std::cout << "Exits main while loop in shortestPath" << endl;
-	cout << "target check. Name is: <" << target->charm << ">" << endl;
+	//std::cout << "Exits main while loop in shortestPath" << endl;
+	//cout << "target check. Name is: <" << target->charm << ">" << endl;
 	if(target->parent == NULL)
 	{
 		std::cout << "IMPOSSIBLE" << std::endl;
@@ -820,34 +811,34 @@ void Graph<T>::shortestPath(T* source, T* destination, int startPos, int worldSi
 	else
 	{
 		//TEST
-		cout << "about to attempt to fill the stack" << endl;
+		//cout << "about to attempt to fill the stack" << endl;
 		Node* temp = target;
 		int numChanges = 0;
 		int numGems = 0;
 		pathStorage.push(temp);
-		cout << "Pushed <" << temp->charm << "> to stack" << endl;
+		//cout << "Pushed <" << temp->charm << "> to stack" << endl;
 		while(temp->parent != NULL)
 		{
 			temp = temp->parent;
 			pathStorage.push(temp);
 			//TEST
-			cout << "pushed <" << temp->charm << "> to stack" << endl;
+			//cout << "pushed <" << temp->charm << "> to stack" << endl;
 		}
 		//TEST
-		cout << "Stack should now be filled" << endl;
+		//cout << "Stack should now be filled" << endl;
 		//need to do this since popping decreases size
 		int iterateLimit = pathStorage.size();
 		Node* temp2;
 		for (int i = 0; i < iterateLimit; ++i)
 		{
 			temp2 = pathStorage.pop();
-			std::cout << temp2->charm << " ";
+			//std::cout << temp2->charm << " ";
 			if(!pathStorage.empty())
 			{
 				numChanges += trans(temp2->charm, pathStorage.top()->charm);
-				std::cout << temp2->magiSize << " " << trans(temp2->charm, pathStorage.top()->charm) << std::endl;
+				//std::cout << temp2->magiSize << " " << trans(temp2->charm, pathStorage.top()->charm) << std::endl;
 				numGems += costTrans(temp2->magi, temp2->magiSize, trans(temp2->charm, pathStorage.top()->charm));
-				std::cout << numGems << std::endl;
+				//std::cout << numGems << std::endl;
 			}
 		}
 		std::cout << numChanges << " " << numGems << std::endl;
@@ -858,17 +849,17 @@ template<typename T>
 void Graph<T>::resetGraph()
 {
 	//TEST
-	cout << "Entered resetGraph" << endl;
+	//cout << "Entered resetGraph" << endl;
 	for (int i = 0; i < size; ++i)
 	{
-		arrayOfNodes[i]->distance = (2^31);
+		arrayOfNodes[i]->distance = pow(2,31);
 		arrayOfNodes[i]->visited = false;
 		arrayOfNodes[i]->parent = NULL;
 		arrayOfNodes[i]->index = 0;
 	}
 
 	//TEST
-	cout << "Exiting resetGraph" << endl;
+	//cout << "Exiting resetGraph" << endl;
 }
 
 int main()
@@ -890,7 +881,7 @@ int main()
 		{
 			std::cin >> nodePtrArray[i]->magi[j];
 		}
-		std::cout << nodePtrArray[i]->magiSize << std::endl;
+		//std::cout << nodePtrArray[i]->magiSize << std::endl;
 		//nodePtrArray[i]->index = i;
 	}
 
@@ -900,7 +891,7 @@ int main()
 	cin >> end;
 	if(begin == end || worldSize <= 1)
 	{
-		cout << "0 0" << endl;
+		//cout << "0 0" << endl;
 		return 0;
 	}
 	Node* source;
