@@ -69,6 +69,7 @@ int maxTrans(int* magi, int size)
 			max = lis[i];
 		}
 	}
+	delete[] lis;
 	return max;
 }
 
@@ -128,7 +129,7 @@ public:
 	Node** arrayOfNodePtrs; // May or may not the final form of this pointer (pointer to an array of pointers)
 	int numAdj;
 	int* incantRequired;
-	int* costRequired;
+	//int* costRequired;
 	// For Daniel
 	Node* parent;
 	int distance;
@@ -156,9 +157,8 @@ public:
 	~Node()
 	{
 		delete[] magi;
-		//delete[] arrayOfNodePtrs;
-		//delete[] incantRequired;
-		//delete[] costRequired;
+		delete[] arrayOfNodePtrs;
+		delete[] incantRequired;
 	}
 };
 
@@ -174,7 +174,7 @@ public:
 	Node** PQ;
 	MinHeapPQ();
 	MinHeapPQ(int);
-	//~MinHeapPQ();
+	~MinHeapPQ();
 	//Don't use this
 	void heapify(Node*, int);
 	void resizePQ();
@@ -187,6 +187,11 @@ public:
 	bool empty();
 
 };
+
+MinHeapPQ::~MinHeapPQ()
+{
+	delete[] PQ;
+}
 
 //MinHeapPQ functions/methods
 MinHeapPQ::MinHeapPQ()
@@ -470,6 +475,7 @@ private:
 public:
 	Stack();
 	Stack(int);
+	~Stack();
 	bool empty();
 	T top();
 	T pop();
@@ -480,6 +486,12 @@ public:
 };
 
 //Stack Methods
+
+template<typename T>
+Stack<T>::~Stack()
+{
+	delete[] array;
+}
 
 //Probably don't want to use this, opt for the other constructor.
 template<typename T>
@@ -650,8 +662,9 @@ public:
 	{
 		for (int i = 0; i < size; ++i)
 		{
-			arrayOfNodes[i]->~Node();
+			delete arrayOfNodes[i];
 		}
+		delete[] arrayOfNodes;
 	}
 
 	void shortestPath(T*, T*, int, int);
